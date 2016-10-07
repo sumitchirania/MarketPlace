@@ -19,6 +19,16 @@ from Crud import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^items/', views.item_detail_view, name='item_detail_view'),
-    url(r'^users/', views.user_detail_view, name='user_detail_view'),
+    url(r'^items/add/(?P<username>[A-Za-z0-9_]+)/', views.item_add, name='item_add'),
+    url(r'^items/edit/(?P<username>[A-Za-z0-9_]+)/(?P<product_name>[A-Za-z0-9]+)/', 
+        views.item_edit, name='item_edit'),
+    url(r'^items/delete/(?P<username>[A-Za-z0-9_]+)/(?P<title>[A-Za-z0-9\[]+)/',
+        views.item_delete, name='item_delete'),
+    url(r'^items/detail/(?P<username>[A-Za-z0-9_]+)/',views.item_detail, name = 'item_detail'),
+    url(r'^users/create/', views.user_create, name='user_create'),
+    url(r'^users/update/(?P<username>[A-Za-z0-9_]+)/', views.user_update, name='user_update'),
+    url(r'^users/read/(?P<username>[A-Za-z0-9_]+)/', views.user_read, name='user_read'),
+    url(r'^users/delete/(?P<username>[A-Za-z0-9_]+)/', views.user_delete, name='user_delete'),
+    url(r'^users/get/(?P<p_key>[0-9]+)/', views.user_get, name='user_get'),
+    url(r'^login/(?P<username>[A-Za-z0-9_]+&?P<password>[A-Za-z0-9_]+)/',views.user_login, name='user_login'),
 ]

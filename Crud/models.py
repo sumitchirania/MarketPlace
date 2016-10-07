@@ -8,12 +8,12 @@ from django.utils.encoding import python_2_unicode_compatible
 class User(models.Model):
     name 	= models.CharField(max_length = 50)
     email 	= models.EmailField(max_length = 50)
-    user_name   = models.CharField(max_length = 50)
+    user_name   = models.CharField(max_length = 50, unique = True)
     password 	= models.CharField(max_length = 20)
-    contact_no  = models.IntegerField(blank = True, null = True)
+    contact_no  = models.IntegerField(blank = True, default = '100100')
     is_seller = models.BooleanField(default = False)
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 @python_2_unicode_compatible
@@ -25,4 +25,4 @@ class Item(models.Model):
     image_uri 	= models.ImageField()
     seller	= models.ForeignKey(User, on_delete = models.CASCADE)
     def __str__(self):
-	return self.title
+	return str(self.title)
