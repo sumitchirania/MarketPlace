@@ -22,7 +22,7 @@ class Item(models.Model):
     description = models.CharField(max_length = 200)
     price 	= models.IntegerField()
     quantity 	= models.IntegerField()
-    image_uri 	= models.ImageField()
+    image_uri 	= models.URLField()
     seller	= models.ForeignKey(User, on_delete = models.CASCADE)
     def __str__(self):
 	return str(self.title)
