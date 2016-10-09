@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'MarketPlace.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Myshop',
+        'NAME': 'AllShop',
 	'USER' : 'root',
 	'PASSWORD' : 'qpmz',
     }

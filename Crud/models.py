@@ -10,7 +10,7 @@ class User(models.Model):
     email 	= models.EmailField(max_length = 50)
     user_name   = models.CharField(max_length = 50, unique = True)
     password 	= models.CharField(max_length = 20)
-    contact_no  = models.IntegerField(blank = True, default = '100100')
+    contact_no  = models.IntegerField(blank = True)
     is_seller = models.BooleanField(default = False)
     def __str__(self):
         return str(self.name)
@@ -18,7 +18,7 @@ class User(models.Model):
 
 @python_2_unicode_compatible
 class Item(models.Model):
-    title 	= models.CharField(max_length = 50)
+    title 	= models.CharField(max_length = 50, unique = True)
     description = models.CharField(max_length = 200)
     price 	= models.IntegerField()
     quantity 	= models.IntegerField()
