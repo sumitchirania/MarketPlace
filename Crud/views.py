@@ -14,12 +14,13 @@ def user_create(request):
         email = user_data.get('email')
         password = user_data.get('password')
         user_name = user_data.get('user_name')
+        contact_no = user_data.get('contact_no')
         is_seller_str = user_data.get('is_seller', 'false')
-        if is_seller_str == 'true':
+        if is_seller_str == 'yes':
             is_seller = True
         else:
             is_seller = False
-        User(name=name, email=email, user_name=user_name, password=password, is_seller=is_seller).save()
+        User(name=name, email=email, user_name=user_name, password=password, contact_no=contact_no, is_seller=is_seller).save()
         retval = {'success': True, 'msg': 'User with Username =  %s created successfully' %user_name}
     except Exception as e:
         retval = {'success': False, 'msg': str(e)}
@@ -29,8 +30,15 @@ def user_update(request,username):
     try:
         user_data = request.GET
         curr_user = User.objects.get(user_name=username)
-        curr_user.email = user_data.get('email',User.objects.get(user_name=username).email)
+        if not user_data.get('email'):
+            curr_user.email = user_data.get('email',User.objects.get(user_name=username).email)
+        else:
+            curr_user.email = User.objects.get(user_name=username).email
         curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
+        if not user_data.get('contact_no'):
+            curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
+        else:
+            curr_user.contact_no = User.objects.get(user_name=username).contact_no
         is_seller_str = user_data.get('is_seller')
         if is_seller_str == 'true':
             is_seller = True
