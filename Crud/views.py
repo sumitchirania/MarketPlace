@@ -1,11 +1,15 @@
 import json
 import ast
+import base64
 from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
 from models import User, Item
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
+STATIC_DIRECTORY = '/home/ubuntu/MarketPlace/Crud/static/images/'
 
 def user_create(request):
     try:
@@ -15,8 +19,8 @@ def user_create(request):
         password = user_data.get('password')
         user_name = user_data.get('user_name')
         contact_no = user_data.get('contact_no')
-        is_seller_str = user_data.get('is_seller', 'false')
-        if is_seller_str == 'yes':
+        is_seller_str = user_data.get('is_seller')
+        if is_seller_str == 'True':
             is_seller = True
         else:
             is_seller = False
@@ -30,15 +34,9 @@ def user_update(request,username):
     try:
         user_data = request.GET
         curr_user = User.objects.get(user_name=username)
-        if not user_data.get('email'):
-            curr_user.email = user_data.get('email',User.objects.get(user_name=username).email)
-        else:
-            curr_user.email = User.objects.get(user_name=username).email
+        curr_user.email = user_data.get('email',User.objects.get(user_name=username).email)
         curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
-        if not user_data.get('contact_no'):
-            curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
-        else:
-            curr_user.contact_no = User.objects.get(user_name=username).contact_no
+        curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
         is_seller_str = user_data.get('is_seller')
         if is_seller_str == 'true':
             is_seller = True
@@ -182,3 +180,30 @@ def user_login(request,username,password):
     else:
         retval = JsonResponse({'success': False, 'msg':'User with username = %s doesnot exist' %username})
     return retval
+
+@csrf_exempt
+def save_image(request):
+    if request.method == 'POST':
+        print request.POST
+        print request.FILES
+        #file_data = request.FILES
+        #print file_data
+        #profile_pic = file_data['profileImage']
+        image_title = request.POST.get('title')
+        user_name = request.POST.get('username')
+        image_base64 = request.POST.get('image')
+        image_jpeg = base64.b64decode(image_base64)
+        if user_name:
+            image_name = user_name + '_' + image_title + '.jpg'
+        else:
+            image_name = image_title + '.jpg'
+        file_path = STATIC_DIRECTORY + image_name
+        with open(file_path, 'wb') as fh:
+            fh.write(image_jpeg)
+        print image_name
+        retval = JsonResponse({'success' : True, 'url' : '/static/image/'+ image_name})
+    else:
+        print 'Wrong request sent from client'
+        retval = JsonResponse({'success' : False})
+    return retval
+

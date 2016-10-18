@@ -31,4 +31,5 @@ urlpatterns = [
     url(r'^users/delete/(?P<username>[A-Za-z0-9_]+)/', views.user_delete, name='user_delete'),
     url(r'^users/get/(?P<p_key>[0-9]+)/', views.user_get, name='user_get'),
     url(r'^login/(?P<username>[A-Za-z0-9_]+)/(?P<password>[A-Za-z0-9_]+)/',views.user_login, name='user_login'),
+    url(r'^saveimage/',views.save_image, name='save_image'),
 ]
