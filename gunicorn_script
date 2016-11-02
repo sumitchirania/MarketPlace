@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+LOGFILE=/home/ubuntu/catalog.log
+# Number of workers is one more than no of cores
+cores=1
+NUM_WORKERS=1
+PRO_PATH=/home/ubuntu/MarketPlace
+# user/group to run as
+USER=ubuntu
+TIMEOUT=100
+cd $PRO_PATH
+export PYTHONPATH=$PYTHONPATH:$PRO_PATH
+exec gunicorn -b 0:8000 -w $NUM_WORKERS --user=$USER --timeout=$TIMEOUT --log-level=warning --log-file=$LOGFILE --access-logfile=/home/ubuntu/access_gunicorn.log MarketPlace.wsgi:application
