@@ -25,7 +25,7 @@ SECRET_KEY = 'n_481fcmmp_4%45zeikq^o0cg$e3o4duo+ebwzokg2($!r3v9s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '54.201.16.130']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Crud',
+    'gunicorn',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'AllShop',
 	'USER' : 'root',
-	'PASSWORD' : 'qpmz',
+	'PASSWORD' : '@f0rr3stgump!',
     }
 }
 

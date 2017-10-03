@@ -10,13 +10,8 @@ class User(models.Model):
     email 	= models.EmailField(max_length = 50, unique = True)
     user_name   = models.CharField(max_length = 50, unique = True)
     password 	= models.CharField(max_length = 20)
-<<<<<<< HEAD
-    contact_no  = models.IntegerField(null = True)
-    is_seller = models.BooleanField(default = False)
-=======
     contact_no  = models.BigIntegerField(null = True,  validators=[MaxValueValidator(9999999999)])
     is_seller   = models.BooleanField(default = False)
->>>>>>> 64aacf93901d4242c6b4eb6f45b630d7e617ea07
     def __str__(self):
         return str(self.name)
 

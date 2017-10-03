@@ -2,8 +2,8 @@
 set -e
 LOGFILE=/home/ubuntu/catalog.log
 # Number of workers is one more than no of cores
-cores=1
-NUM_WORKERS=1
+NUM_CORES=1
+NUM_WORKERS=2
 PRO_PATH=/home/ubuntu/MarketPlace
 # user/group to run as
 USER=ubuntu

@@ -10,6 +10,19 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 STATIC_DIRECTORY = '/home/ubuntu/MarketPlace/Crud/static/images/'
 
+def user_check(request):
+    try:
+        user_data = request.GET
+        user_name = user_data.get('user_name')
+        user = User.objects.get(user_name = user_name)
+        if user:
+            retval = {'success': False, 'msg': 'username exists, choose a different username'}
+
+    except Exception as e:
+        retval = {'success': True, 'msg': 'username available'}
+        
+    return JsonResponse(retval)
+
 def user_create(request):
     try:
         user_data = request.GET
@@ -26,31 +39,17 @@ def user_create(request):
         User(name=name, email=email, user_name=user_name, password=password, contact_no=contact_no, is_seller=is_seller).save()
         retval = {'success': True, 'msg': 'User with Username =  %s created successfully' %user_name}
     except Exception as e:
-        if str(e).startswith('invalid literal for int() with base 10'):
-            message = "Contact No. Invalid, Enter a Valid one"
-        elif str(e).startswith('(1062, "Duplicate entry'):
-            message = "Username already taken.Enter a new username"
-        else:
             message = str(e)
-        retval = {'success': False, 'msg': message}
+            retval = {'success': False, 'msg': message}
     return JsonResponse(retval)
 
 def user_update(request,username):
     try:
         user_data = request.GET
         curr_user = User.objects.get(user_name=username)
+        curr_user.name = user_data.get('name',User.objects.get(user_name=username).name)
         curr_user.email = user_data.get('email',User.objects.get(user_name=username).email)
         curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
-        curr_user.contact_no = user_data.get('contact_no',User.objects.get(user_name=username).contact_no)
-        is_seller_str = user_data.get('is_seller')
-        if is_seller_str == 'true':
-            is_seller = True
-        elif is_seller_str == 'false':
-            is_seller = False
-            Item.objects.filter(seller=curr_user).delete()
-        else:
-            is_seller = User.objects.get(user_name=username).is_seller
-        curr_user.is_seller=is_seller
         curr_user.save()
         retval = {'success': True, 'msg': 'User with USERNAME = %s  successfully updated' % username}
     except Exception as e:
@@ -71,7 +70,7 @@ def user_read(request,username):
 
 def user_get(request,p_key):
     try:
-        this_user_name = User.objects.get(pk=p_key).user_name
+        this_user_name = User.objects.get(pk=p_key).name
         this_user_contact = User.objects.get(pk=p_key).contact_no
         this_user_map = {'success': True, 'name': this_user_name, 'contact': this_user_contact}
         response =  JsonResponse(this_user_map, safe=False)
@@ -179,27 +178,32 @@ def item_delete(request,username,title):
 
               
 
-def item_detail(request,username):
+def item_detail(request):
+    params = request.GET
+    username = params.get('userName')
     user = User.objects.filter(user_name=username)
     if user:
-        User.objects.get(user_name=username)
-        user_status = User.objects.get(user_name=username).is_seller
-        if user_status == True:
-            try:
-                this_seller_items = Item.objects.filter(seller=user)
-                this_seller_items = this_seller_items.values()
-                this_seller_items = [entry for entry in this_seller_items]
-                this_seller_items_map = {'success': True, 'data': this_seller_items}
-                response = JsonResponse(this_seller_items_map, safe = False)
-            except Exception as e:
-                response = JsonResponse({'success': False, 'msg': str(e)})
-        else:
-            all_items = Item.objects.values()
-            all_items = [entry for entry in all_items] 
-            all_items_map = {'success': True, 'data':all_items}
-            response = JsonResponse(all_items_map, safe=False)
+        user = User.objects.get(user_name=username)
+    if username is not None and user:
+        user_is_seller = User.objects.get(user_name=username).is_seller
     else:
-        response = JsonResponse({'success': False, 'msg' : 'No registered user with username = %s' %username})
+        user_is_seller = False
+    if user_is_seller:
+        # User is a seller
+        try:
+            this_seller_items = Item.objects.filter(seller=user)
+            this_seller_items = this_seller_items.values()
+            this_seller_items = [entry for entry in this_seller_items]
+            this_seller_items_map = {'success': True, 'data': this_seller_items}
+            response = JsonResponse(this_seller_items_map, safe = False)
+        except Exception as e:
+            response = JsonResponse({'success': False, 'msg': str(e)})
+    else:
+        # User is a customer 
+        all_items = Item.objects.values()
+        all_items = [entry for entry in all_items] 
+        all_items_map = {'success': True, 'data':all_items}
+        response = JsonResponse(all_items_map, safe=False)
     return response
 
 
